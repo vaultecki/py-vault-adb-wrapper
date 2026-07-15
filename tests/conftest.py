@@ -42,9 +42,10 @@ def config_data():
             "tap_center": [["tap", "500 300"]],
             "wait_a_bit": [["sleep", "0.01"]],
             "chain": [["action", "greet"]],
-            "copy_in": [["push", "unused"]],
-            "copy_out": [["pull", "unused"]],
-            "expose_port": [["forward", "unused"]],
+            "copy_in": [["push", "$ARG0", "$ARG1"]],
+            "copy_out": [["pull", "$ARG0", "$ARG1"]],
+            "expose_port": [["forward", "$ARG0", "$ARG1"]],
+            "copy_in_missing_dest": [["push", "$ARG0"]],
             "unknown_step": [["frobnicate", "x"]],
             "broken_step": [["shell"]],
         }

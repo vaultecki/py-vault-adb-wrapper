@@ -8,7 +8,7 @@ A Python wrapper for Android Debug Bridge (ADB) operations with JSON-based actio
 - 📝 **JSON Configuration**: Define reusable actions in JSON format
 - 🎯 **Type-Safe**: Full type hints for better IDE support
 - 🚨 **Exception Handling**: Specific exceptions for different error scenarios
-- 📊 **Logging**: Structured logging for debugging
+- 📊 **Logging**: Structured logging for debuggingja
 - 🔄 **Action Chaining**: Support for nested and sequential actions
 
 ## Installation
@@ -122,9 +122,9 @@ The JSON configuration file uses the following structure:
 | `tap` | Simulate screen tap | `["tap", "500 300"]` |
 | `action` | Execute another action | `["action", "other_action"]` |
 | `sleep` | Wait for seconds | `["sleep", "2"]` |
-| `push` | Push file to device | `["push", "uses $ARG0 and $ARG1"]` |
-| `pull` | Pull file from device | `["pull", "uses $ARG0 and $ARG1"]` |
-| `forward` | Port forwarding | `["forward", "uses $ARG0 and $ARG1"]` |
+| `push` | Push file to device | `["push", "source", "destination"]` |
+| `pull` | Pull file from device | `["pull", "source", "destination"]` |
+| `forward` | Port forwarding | `["forward", "local_port", "remote_port"]` |
 
 ### Argument Substitution
 
@@ -252,7 +252,7 @@ Config:
 ```json
 {
   "setup_forwarding": [
-    ["forward", "uses $ARG0 and $ARG1"]
+    ["forward", "$ARG0", "$ARG1"]
   ]
 }
 ```

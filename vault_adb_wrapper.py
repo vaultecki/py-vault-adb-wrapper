@@ -201,28 +201,38 @@ class VaultPhone:
         time.sleep(sleep_time)
         return True
 
-    def _execute_push(self, args: tuple[Any, ...]) -> Any:
+    def _execute_push(self, action_data: list[str], args: tuple[Any, ...]) -> Any:
         """Push file to device."""
-        if len(args) < 2:
-            raise InsufficientArgumentsException("Push requires 2 arguments: source, destination")
-        logger.debug(f"Push: {args[0]} -> {args[1]}")
-        return self.device.push(args[0], args[1])
-
-    def _execute_pull(self, args: tuple[Any, ...]) -> Any:
-        """Pull file from device."""
-        if len(args) < 2:
-            raise InsufficientArgumentsException("Pull requires 2 arguments: source, destination")
-        logger.debug(f"Pull: {args[0]} -> {args[1]}")
-        return self.device.pull(args[0], args[1])
-
-    def _execute_forward(self, args: tuple[Any, ...]) -> Any:
-        """Set up port forwarding."""
-        if len(args) < 2:
+        if len(action_data) < 2:
             raise InsufficientArgumentsException(
-                "Forward requires 2 arguments: local_port, remote_port"
+                "Push action requires 2 config fields: source, destination"
             )
-        logger.debug(f"Forward: {args[0]} -> {args[1]}")
-        return self.device.forward(f"tcp:{args[0]}", f"tcp:{args[1]}")
+        source = self._substitute_args(action_data[0], args)
+        destination = self._substitute_args(action_data[1], args)
+        logger.debug(f"Push: {source} -> {destination}")
+        return self.device.push(source, destination)
+
+    def _execute_pull(self, action_data: list[str], args: tuple[Any, ...]) -> Any:
+        """Pull file from device."""
+        if len(action_data) < 2:
+            raise InsufficientArgumentsException(
+                "Pull action requires 2 config fields: source, destination"
+            )
+        source = self._substitute_args(action_data[0], args)
+        destination = self._substitute_args(action_data[1], args)
+        logger.debug(f"Pull: {source} -> {destination}")
+        return self.device.pull(source, destination)
+
+    def _execute_forward(self, action_data: list[str], args: tuple[Any, ...]) -> Any:
+        """Set up port forwarding."""
+        if len(action_data) < 2:
+            raise InsufficientArgumentsException(
+                "Forward action requires 2 config fields: local_port, remote_port"
+            )
+        local_port = self._substitute_args(action_data[0], args)
+        remote_port = self._substitute_args(action_data[1], args)
+        logger.debug(f"Forward: {local_port} -> {remote_port}")
+        return self.device.forward(f"tcp:{local_port}", f"tcp:{remote_port}")
 
     def action(self, action: str, *args: Any) -> list[Any]:
         """
@@ -266,11 +276,11 @@ class VaultPhone:
                 elif action_type == ActionType.SLEEP.value:
                     result = self._execute_sleep(action_data)
                 elif action_type == ActionType.PUSH.value:
-                    result = self._execute_push(args)
+                    result = self._execute_push(element[1:], args)
                 elif action_type == ActionType.PULL.value:
-                    result = self._execute_pull(args)
+                    result = self._execute_pull(element[1:], args)
                 elif action_type == ActionType.FORWARD.value:
-                    result = self._execute_forward(args)
+                    result = self._execute_forward(element[1:], args)
                 else:
                     logger.warning(f"Unknown action type: {action_type}")
                     result = None

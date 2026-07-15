@@ -130,10 +130,10 @@ class TestAction:
         fake_device.push.assert_called_once_with("local.apk", "/sdcard/app.apk")
         assert results == ["push-ok"]
 
-    def test_push_with_insufficient_args_is_caught(self, patch_adb_client, config_file):
+    def test_push_with_missing_config_field_is_caught(self, patch_adb_client, config_file):
         phone = VaultPhone(uuid=SERIAL, config=config_file)
 
-        results = phone.action("copy_in")
+        results = phone.action("copy_in_missing_dest", "local.apk")
 
         assert results == [None]
 
@@ -177,7 +177,7 @@ class TestAction:
         phone = VaultPhone(uuid=SERIAL, config=config_file)
 
         with pytest.raises(InsufficientArgumentsException):
-            phone._execute_push(())
+            phone._execute_push(["$ARG0"], ())
 
 
 class TestIntrospection:
