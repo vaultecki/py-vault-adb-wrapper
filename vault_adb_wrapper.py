@@ -184,9 +184,9 @@ class VaultPhone:
         logger.debug(f"Shell: {expr}")
         return self.device.shell(expr)
 
-    def _execute_tap(self, coordinates: str) -> str:
+    def _execute_tap(self, coordinates: str, args: tuple[Any, ...]) -> str:
         """Execute tap action."""
-        expr = f"input tap {coordinates}"
+        expr = f"input tap {self._substitute_args(coordinates, args)}"
         logger.debug(f"Tap: {expr}")
         return self.device.shell(expr)
 
@@ -270,7 +270,7 @@ class VaultPhone:
                 if action_type == ActionType.SHELL.value:
                     result = self._execute_shell(action_data, args)
                 elif action_type == ActionType.TAP.value:
-                    result = self._execute_tap(action_data)
+                    result = self._execute_tap(action_data, args)
                 elif action_type == ActionType.ACTION.value:
                     result = self._execute_action(action_data, args)
                 elif action_type == ActionType.SLEEP.value:

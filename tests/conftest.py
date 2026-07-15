@@ -40,6 +40,7 @@ def config_data():
         SERIAL: {
             "greet": [["shell", "echo hello $ARG0"]],
             "tap_center": [["tap", "500 300"]],
+            "tap_at": [["tap", "$ARG0 $ARG1"]],
             "wait_a_bit": [["sleep", "0.01"]],
             "chain": [["action", "greet"]],
             "copy_in": [["push", "$ARG0", "$ARG1"]],

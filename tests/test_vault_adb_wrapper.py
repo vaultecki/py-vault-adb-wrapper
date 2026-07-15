@@ -104,6 +104,14 @@ class TestAction:
         fake_device.shell.assert_called_once_with("input tap 500 300")
         assert results == ["shell-ok"]
 
+    def test_tap_action_substitutes_args(self, patch_adb_client, fake_device, config_file):
+        phone = VaultPhone(uuid=SERIAL, config=config_file)
+
+        results = phone.action("tap_at", "120", "480")
+
+        fake_device.shell.assert_called_once_with("input tap 120 480")
+        assert results == ["shell-ok"]
+
     def test_sleep_action_waits(self, patch_adb_client, config_file, monkeypatch):
         sleep_mock = MagicMock()
         monkeypatch.setattr("vault_adb_wrapper.time.sleep", sleep_mock)

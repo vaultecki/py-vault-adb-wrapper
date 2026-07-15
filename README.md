@@ -119,7 +119,7 @@ The JSON configuration file uses the following structure:
 | Action Type | Description | Example |
 |-------------|-------------|---------|
 | `shell` | Execute shell command | `["shell", "am start ..."]` |
-| `tap` | Simulate screen tap | `["tap", "500 300"]` |
+| `tap` | Simulate screen tap | `["tap", "500 300"]` or `["tap", "$ARG0 $ARG1"]` |
 | `action` | Execute another action | `["action", "other_action"]` |
 | `sleep` | Wait for seconds | `["sleep", "2"]` |
 | `push` | Push file to device | `["push", "source", "destination"]` |
