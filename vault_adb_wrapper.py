@@ -1,13 +1,14 @@
 # Copyright [2025] [ecki]
 # SPDX-License-Identifier: Apache-2.0
 
-import adbutils
 import json
 import logging
 import time
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
+
+import adbutils
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO)
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ActionType(Enum):
     """Enum for supported action types"""
+
     SHELL = "shell"
     TAP = "tap"
     ACTION = "action"
@@ -27,27 +29,22 @@ class ActionType(Enum):
 
 class VaultPhoneException(Exception):
     """Base exception for VaultPhone errors"""
-    pass
 
 
 class DeviceNotFoundException(VaultPhoneException):
     """Exception raised when device is not found"""
-    pass
 
 
 class ConfigNotFoundException(VaultPhoneException):
     """Exception raised when config is missing or empty"""
-    pass
 
 
 class ActionNotFoundException(VaultPhoneException):
     """Exception raised when action is not found in config"""
-    pass
 
 
 class InsufficientArgumentsException(VaultPhoneException):
     """Exception raised when insufficient arguments are provided"""
-    pass
 
 
 class VaultPhone:
@@ -58,12 +55,12 @@ class VaultPhone:
     """
 
     def __init__(
-            self,
-            uuid: Union[str, List[str]],
-            config: Union[str, Path],
-            host_ip: str = "127.0.0.1",
-            host_port: int = 5037,
-            connect_timeout: float = 1.0
+        self,
+        uuid: Union[str, list[str]],
+        config: Union[str, Path],
+        host_ip: str = "127.0.0.1",
+        host_port: int = 5037,
+        connect_timeout: float = 1.0,
     ):
         """
         Initialize VaultPhone instance.
@@ -92,9 +89,7 @@ class VaultPhone:
                 self.client.connect(uuid_str, timeout=connect_timeout)
                 logger.info(f"Connected to {uuid_str}")
             except Exception as e:
-                raise DeviceNotFoundException(
-                    f"Connection to {uuid_str} failed: {e}"
-                )
+                raise DeviceNotFoundException(f"Connection to {uuid_str} failed: {e}") from e
         else:
             uuid_str = uuid
 
@@ -107,9 +102,7 @@ class VaultPhone:
         self.data = self._load_config(config)
 
         if not self.data:
-            raise ConfigNotFoundException(
-                f"No configuration found for device {self.__uuid}"
-            )
+            raise ConfigNotFoundException(f"No configuration found for device {self.__uuid}")
 
         logger.info(f"VaultPhone initialized for {self.__uuid}")
 
@@ -122,11 +115,10 @@ class VaultPhone:
                 return
 
         raise DeviceNotFoundException(
-            f"Device {self.__uuid} not found. "
-            f"Available devices: {[d.serial for d in devices]}"
+            f"Device {self.__uuid} not found. Available devices: {[d.serial for d in devices]}"
         )
 
-    def _load_config(self, filename: Union[str, Path]) -> Dict[str, Any]:
+    def _load_config(self, filename: Union[str, Path]) -> dict[str, Any]:
         """
         Load JSON configuration from file.
 
@@ -143,7 +135,7 @@ class VaultPhone:
             return {}
 
         try:
-            with config_path.open('r', encoding='utf-8') as f:
+            with config_path.open("r", encoding="utf-8") as f:
                 data = json.load(f)
                 return data.get(self.__uuid, {})
         except json.JSONDecodeError as e:
@@ -167,7 +159,7 @@ class VaultPhone:
         """
         return self.device is not None
 
-    def _substitute_args(self, expression: str, args: Tuple[Any, ...]) -> str:
+    def _substitute_args(self, expression: str, args: tuple[Any, ...]) -> str:
         """
         Replace $ARG0, $ARG1, ... in expression with provided arguments.
 
@@ -186,7 +178,7 @@ class VaultPhone:
             result = result.replace(placeholder, safe_arg)
         return result
 
-    def _execute_shell(self, command: str, args: Tuple[Any, ...]) -> str:
+    def _execute_shell(self, command: str, args: tuple[Any, ...]) -> str:
         """Execute shell command."""
         expr = self._substitute_args(command, args)
         logger.debug(f"Shell: {expr}")
@@ -198,7 +190,7 @@ class VaultPhone:
         logger.debug(f"Tap: {expr}")
         return self.device.shell(expr)
 
-    def _execute_action(self, action_name: str, args: Tuple[Any, ...]) -> Any:
+    def _execute_action(self, action_name: str, args: tuple[Any, ...]) -> Any:
         """Execute nested action."""
         return self.action(action_name, *args)
 
@@ -209,25 +201,21 @@ class VaultPhone:
         time.sleep(sleep_time)
         return True
 
-    def _execute_push(self, args: Tuple[Any, ...]) -> Any:
+    def _execute_push(self, args: tuple[Any, ...]) -> Any:
         """Push file to device."""
         if len(args) < 2:
-            raise InsufficientArgumentsException(
-                "Push requires 2 arguments: source, destination"
-            )
+            raise InsufficientArgumentsException("Push requires 2 arguments: source, destination")
         logger.debug(f"Push: {args[0]} -> {args[1]}")
         return self.device.push(args[0], args[1])
 
-    def _execute_pull(self, args: Tuple[Any, ...]) -> Any:
+    def _execute_pull(self, args: tuple[Any, ...]) -> Any:
         """Pull file from device."""
         if len(args) < 2:
-            raise InsufficientArgumentsException(
-                "Pull requires 2 arguments: source, destination"
-            )
+            raise InsufficientArgumentsException("Pull requires 2 arguments: source, destination")
         logger.debug(f"Pull: {args[0]} -> {args[1]}")
         return self.device.pull(args[0], args[1])
 
-    def _execute_forward(self, args: Tuple[Any, ...]) -> Any:
+    def _execute_forward(self, args: tuple[Any, ...]) -> Any:
         """Set up port forwarding."""
         if len(args) < 2:
             raise InsufficientArgumentsException(
@@ -236,7 +224,7 @@ class VaultPhone:
         logger.debug(f"Forward: {args[0]} -> {args[1]}")
         return self.device.forward(f"tcp:{args[0]}", f"tcp:{args[1]}")
 
-    def action(self, action: str, *args: Any) -> List[Any]:
+    def action(self, action: str, *args: Any) -> list[Any]:
         """
         Execute predefined action from config.
 
@@ -295,7 +283,7 @@ class VaultPhone:
 
         return results
 
-    def get_available_actions(self) -> List[str]:
+    def get_available_actions(self) -> list[str]:
         """
         Get list of available actions.
 
@@ -310,14 +298,14 @@ class VaultPhone:
         return f"VaultPhone(uuid={self.__uuid}, status={status})"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Example usage
     try:
         phone = VaultPhone(
             uuid="TA986027DH",  # or ["192.168.1.100", "5555"] for WiFi
             config="phone.json",
             host_ip="127.0.0.1",
-            host_port=5037
+            host_port=5037,
         )
 
         if phone.status():

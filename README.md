@@ -14,7 +14,10 @@ A Python wrapper for Android Debug Bridge (ADB) operations with JSON-based actio
 ## Installation
 
 ```bash
-pip install -r requirements.txt
+pip install .
+
+# or, for development (adds pytest and ruff):
+pip install -e ".[dev]"
 ```
 
 ## Requirements
