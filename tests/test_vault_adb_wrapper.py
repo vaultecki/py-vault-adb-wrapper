@@ -122,6 +122,16 @@ class TestAction:
         sleep_mock.assert_called_once_with(0.01)
         assert results == [True]
 
+    def test_sleep_action_substitutes_args(self, patch_adb_client, config_file, monkeypatch):
+        sleep_mock = MagicMock()
+        monkeypatch.setattr("vault_adb_wrapper.time.sleep", sleep_mock)
+        phone = VaultPhone(uuid=SERIAL, config=config_file)
+
+        results = phone.action("wait_dynamic", "0.5")
+
+        sleep_mock.assert_called_once_with(0.5)
+        assert results == [True]
+
     def test_nested_action_runs_referenced_action(self, patch_adb_client, fake_device, config_file):
         phone = VaultPhone(uuid=SERIAL, config=config_file)
 

@@ -194,9 +194,9 @@ class VaultPhone:
         """Execute nested action."""
         return self.action(action_name, *args)
 
-    def _execute_sleep(self, duration: str) -> bool:
+    def _execute_sleep(self, duration: str, args: tuple[Any, ...]) -> bool:
         """Wait for specified duration."""
-        sleep_time = float(duration)
+        sleep_time = float(self._substitute_args(duration, args))
         logger.debug(f"Sleep: {sleep_time}s")
         time.sleep(sleep_time)
         return True
@@ -274,7 +274,7 @@ class VaultPhone:
                 elif action_type == ActionType.ACTION.value:
                     result = self._execute_action(action_data, args)
                 elif action_type == ActionType.SLEEP.value:
-                    result = self._execute_sleep(action_data)
+                    result = self._execute_sleep(action_data, args)
                 elif action_type == ActionType.PUSH.value:
                     result = self._execute_push(element[1:], args)
                 elif action_type == ActionType.PULL.value:

@@ -42,6 +42,7 @@ def config_data():
             "tap_center": [["tap", "500 300"]],
             "tap_at": [["tap", "$ARG0 $ARG1"]],
             "wait_a_bit": [["sleep", "0.01"]],
+            "wait_dynamic": [["sleep", "$ARG0"]],
             "chain": [["action", "greet"]],
             "copy_in": [["push", "$ARG0", "$ARG1"]],
             "copy_out": [["pull", "$ARG0", "$ARG1"]],

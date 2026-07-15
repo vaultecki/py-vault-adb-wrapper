@@ -121,7 +121,7 @@ The JSON configuration file uses the following structure:
 | `shell` | Execute shell command | `["shell", "am start ..."]` |
 | `tap` | Simulate screen tap | `["tap", "500 300"]` or `["tap", "$ARG0 $ARG1"]` |
 | `action` | Execute another action | `["action", "other_action"]` |
-| `sleep` | Wait for seconds | `["sleep", "2"]` |
+| `sleep` | Wait for seconds | `["sleep", "2"]` or `["sleep", "$ARG0"]` |
 | `push` | Push file to device | `["push", "source", "destination"]` |
 | `pull` | Pull file from device | `["pull", "source", "destination"]` |
 | `forward` | Port forwarding | `["forward", "local_port", "remote_port"]` |
